@@ -30,10 +30,10 @@ io.on("connection", (socket) => {
       console.log(`User ${userName} successfully joined meet ${meetCode}`);
 
       // Confirm to the user that they've joined successfully
-      socket.emit("join-meet-success", { meetCode, userName, localId });
+      socket.emit("join-meet-success", data);
 
       // Notify other users in the room
-      socket.to(meetCode.toString()).emit("user-joined", { userName, localId });
+      socket.to(meetCode.toString()).emit("user-joined", data);
     } catch (error) {
       console.error(`Error joining meet ${meetCode}:`, error);
       socket.emit("join-meet-error", { message: "Failed to join meet" });
