@@ -8,7 +8,6 @@ import { io, Socket } from 'socket.io-client';
 export class SocketService {
   socket!: Socket;
   constructor() {
-    console.log('c');
     this.socket = io('http://localhost:3000');
     this.socket.on('connect', function () {
       console.log('Connected!');

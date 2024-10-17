@@ -11,11 +11,7 @@ import { SocketService } from './socket.service';
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
 })
-export class AppComponent implements OnInit {
-  constructor(private socket: SocketService) {}
-
-  ngOnInit(): void {}
-}
+export class AppComponent {}
 // export class AppComponent implements OnInit {
 //   peer!: Peer;
 //   localPeerId: string = '';

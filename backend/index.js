@@ -20,6 +20,30 @@ app.get("/", (req, res) => {
 
 io.on("connection", (socket) => {
   console.log("a user connected");
+
+  socket.on("join-meet", (data) => {
+    const { meetCode, userName, localId } = data;
+    console.log(`User ${userName} (${localId}) is joining meet ${meetCode}`);
+
+    try {
+      socket.join(meetCode.toString());
+      console.log(`User ${userName} successfully joined meet ${meetCode}`);
+
+      // Confirm to the user that they've joined successfully
+      socket.emit("join-meet-success", { meetCode, userName, localId });
+
+      // Notify other users in the room
+      socket.to(meetCode.toString()).emit("user-joined", { userName, localId });
+    } catch (error) {
+      console.error(`Error joining meet ${meetCode}:`, error);
+      socket.emit("join-meet-error", { message: "Failed to join meet" });
+    }
+  });
+
+  socket.on("disconnect", () => {
+    console.log("user disconnected");
+    // You might want to notify other users in the room that this user has left
+  });
 });
 
 server.listen(3000, () => {
