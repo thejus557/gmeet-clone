@@ -1,1 +1,67 @@
-<div id="video-grid"></div>
+<div class="meet-container">
+  <div class="video-grid" id="video-grid"></div>
+
+  <div class="participants-list">
+    <h3>Participants</h3>
+    <ul>
+      <li
+        *ngFor="let participant of socketService.participants"
+        class="participant"
+      >
+        <span>{{ participant.userName }}</span>
+        <span class="status-icons">
+          <i
+            class="fas"
+            [ngClass]="{
+              'fa-microphone': !participant.isMuted,
+              'fa-microphone-slash': participant.isMuted
+            }"
+          ></i>
+          <i
+            class="fas"
+            [ngClass]="{
+              'fa-video': participant.isVideoOn,
+              'fa-video-slash': !participant.isVideoOn
+            }"
+          ></i>
+        </span>
+        <button
+          *ngIf="participant.peerId !== socketService.localPeerId"
+          (click)="muteUser(participant.peerId)"
+        >
+          {{ participant.isMuted ? "Unmute" : "Mute" }}
+        </button>
+      </li>
+    </ul>
+  </div>
+
+  <div class="controls">
+    <button (click)="toggleAudio()" class="control-button">
+      <i
+        class="fas"
+        [ngClass]="{
+          'fa-microphone': !isMuted,
+          'fa-microphone-slash': isMuted
+        }"
+      ></i>
+      {{ isMuted ? "Unmute" : "Mute" }}
+    </button>
+    <button (click)="toggleVideo()" class="control-button">
+      <i
+        class="fas"
+        [ngClass]="{ 'fa-video': isVideoOn, 'fa-video-slash': !isVideoOn }"
+      ></i>
+      {{ isVideoOn ? "Turn Off Video" : "Turn On Video" }}
+    </button>
+    <button (click)="endMeeting()" class="control-button end-call">
+      <i class="fas fa-phone-slash"></i>
+      End Call
+    </button>
+  </div>
+
+  <div class="meeting-info">
+    <h3>Meeting Information</h3>
+    <p><strong>Meeting Code:</strong> {{ meetCode }}</p>
+    <p><strong>Your Name:</strong> {{ userName }}</p>
+  </div>
+</div>
