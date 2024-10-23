@@ -42,6 +42,7 @@ export class SocketService {
     this.peer = new Peer();
     this.peer.on('open', (id) => {
       this.localPeerId = id;
+      localStorage.setItem('peerId', id);
       this.joinRoom({ ...data, peerId: id });
     });
   }
@@ -61,15 +62,14 @@ export class SocketService {
     stream: MediaStream,
     data: any
   ) {
+    let streamHandled = false;
+
     call.answer(stream);
     call.on('stream', (remoteStream: MediaStream) => {
-      this.participants.push({
-        peerId: data.peerId,
-        userName: data.userName,
-        isMuted: false,
-        isVideoOn: true,
-      });
-      this.addVideoToGrid(remoteStream, call.peer);
+      if (!streamHandled) {
+        streamHandled = true;
+        this.addVideoToGrid(remoteStream, call.peer);
+      }
     });
   }
 

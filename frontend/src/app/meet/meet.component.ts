@@ -8,6 +8,7 @@ interface Participant {
   userName: string;
   isMuted: boolean;
   isVideoOn: boolean;
+  muterName: string;
 }
 
 @Component({
@@ -19,14 +20,12 @@ interface Participant {
   styleUrl: './meet.component.scss',
 })
 export class MeetComponent implements OnInit, OnDestroy {
-  localId!: string;
   meetCode!: string;
   password!: string;
   userName!: string;
   localStreamVideo!: MediaStream;
   isMuted: boolean = false;
   isVideoOn: boolean = true;
-  participants: Participant[] = [];
 
   constructor(
     private route: ActivatedRoute,
@@ -35,8 +34,7 @@ export class MeetComponent implements OnInit, OnDestroy {
   ) {
     const navigation = this.router.getCurrentNavigation();
     if (navigation?.extras.state) {
-      const { localId, userName, password } = navigation.extras.state;
-      this.localId = localId;
+      const { userName, password } = navigation.extras.state;
       this.userName = userName;
       this.password = password;
     }
@@ -50,17 +48,26 @@ export class MeetComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.endMeeting();
+    this.socketService.socket.emit('disconnect', { id: this.meetCode });
   }
 
   private initializeMeeting() {
     this.socketService.initializePeerConnection({
       meetCode: this.meetCode,
       userName: this.userName,
-      localId: this.localId,
+      isMuted: this.isMuted,
+      isVideoOn: this.isVideoOn,
+      peerId: this.socketService.localPeerId,
+      muterName: null,
+      oldPeerId: localStorage.getItem('peerId') || null,
     });
   }
 
   private setupEventListeners() {
+    this.socketService.socket.on('participant-update', async (data) => {
+      this.socketService.participants = data;
+    });
+
     this.socketService.socket.on('join-meet-success', async (data) => {
       await this.addLocalVideo();
       this.socketService.addUserToCall(this.localStreamVideo, data);
@@ -93,14 +100,12 @@ export class MeetComponent implements OnInit, OnDestroy {
       data.peerId,
       this.localStreamVideo
     );
+    let streamHandled = false;
     call.on('stream', (remoteStream) => {
-      this.socketService.addVideoToGrid(remoteStream, data.peerId);
-      this.socketService.participants.push({
-        peerId: data.peerId,
-        userName: data.userName,
-        isMuted: false,
-        isVideoOn: true,
-      });
+      if (!streamHandled) {
+        streamHandled = true;
+        this.socketService.addVideoToGrid(remoteStream, data.peerId);
+      }
     });
   }
 
@@ -115,12 +120,6 @@ export class MeetComponent implements OnInit, OnDestroy {
         localVideo,
         this.socketService.localPeerId
       );
-      this.socketService.participants.push({
-        peerId: this.socketService.localPeerId,
-        userName: this.userName,
-        isMuted: this.isMuted,
-        isVideoOn: this.isVideoOn,
-      });
     } catch (error) {
       console.error('Error accessing media devices:', error);
       // Handle error (e.g., show error message to user)
@@ -131,7 +130,6 @@ export class MeetComponent implements OnInit, OnDestroy {
     this.socketService.socket.emit('end-meet', {
       meetCode: this.meetCode,
       userName: this.userName,
-      localId: this.localId,
       peerId: this.socketService.localPeerId,
     });
   }
@@ -144,8 +142,10 @@ export class MeetComponent implements OnInit, OnDestroy {
     this.socketService.toggleAudio({
       meetCode: this.meetCode,
       userName: this.userName,
-      localId: this.localId,
       isMuted: this.isMuted,
+      isVideoOn: this.isVideoOn,
+      peerId: this.socketService.localPeerId,
+      muterName: null,
     });
     this.updateParticipantAudioState({
       peerId: this.socketService.localPeerId,
@@ -161,8 +161,10 @@ export class MeetComponent implements OnInit, OnDestroy {
     this.socketService.toggleVideo({
       meetCode: this.meetCode,
       userName: this.userName,
-      localId: this.localId,
+      isMuted: this.isMuted,
       isVideoOn: this.isVideoOn,
+      peerId: this.socketService.localPeerId,
+      muterName: null,
     });
     this.updateParticipantVideoState({
       peerId: this.socketService.localPeerId,
@@ -177,8 +179,12 @@ export class MeetComponent implements OnInit, OnDestroy {
     if (participant) {
       this.socketService.muteUser({
         meetCode: this.meetCode,
+        userName: this.userName,
+        isMuted: this.isMuted,
+        isVideoOn: this.isVideoOn,
+        peerId: this.socketService.localPeerId,
+        muterName: null,
         targetUserId: peerId,
-        muterName: this.userName,
       });
     }
   }
