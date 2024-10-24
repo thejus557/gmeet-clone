@@ -1,8 +1,11 @@
 {
   "name": "server",
   "scripts": {
-    "start": "node ./index.js",
-    "dev": "nodemon ./index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "engines": {
+    "node": "14.x"
   },
   "dependencies": {
     "cors": "^2.8.5",
