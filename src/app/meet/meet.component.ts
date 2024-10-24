@@ -110,12 +110,9 @@ export class MeetComponent implements OnInit, OnDestroy {
       data.peerId,
       this.localStreamVideo
     );
-    let streamHandled = false;
+
     call.on('stream', (remoteStream) => {
-      if (!streamHandled) {
-        streamHandled = true;
-        this.socketService.addVideoToGrid(remoteStream, data.peerId);
-      }
+      this.socketService.addVideoToGrid(remoteStream, data.peerId);
     });
   }
 
