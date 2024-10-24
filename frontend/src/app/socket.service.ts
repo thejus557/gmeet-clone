@@ -18,7 +18,7 @@ export class SocketService {
   }
 
   private initializeSocket() {
-    this.socket = io('http://localhost:3000');
+    this.socket = io('https://connect-meet-backend.vercel.app');
     this.socket.on('connect', () => {
       console.log('Socket connected!');
     });
