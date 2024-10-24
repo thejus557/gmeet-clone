@@ -12,12 +12,20 @@ import { SocketService } from '../socket.service';
   styleUrls: ['./landing.component.scss'],
 })
 export class LandingComponent implements OnInit {
-  meetCode = '123-456-789';
-  userName = 'surya';
+  meetCode = '';
+  userName = '';
 
   constructor(private socket: SocketService, private router: Router) {}
 
   ngOnInit(): void {}
+
+  handleJoinMeeting() {}
+  handleStartInstantMeeting() {
+    const uuid = crypto.randomUUID();
+    const meetUserName = prompt('Enter your name') || 'user';
+    sessionStorage.setItem('userName', meetUserName);
+    this.router.navigate(['/', uuid]);
+  }
 
   onJoin() {
     sessionStorage.setItem('userName', this.userName);

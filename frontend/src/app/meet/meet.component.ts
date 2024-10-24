@@ -231,4 +231,22 @@ export class MeetComponent implements OnInit, OnDestroy {
       this.toggleAudio();
     }
   }
+
+  copyToClipboard() {
+    const content = `
+      Meeting Information
+      Meeting Code: ${this.meetCode}
+      Your Name: ${this.userName}
+    `;
+
+    navigator.clipboard
+      .writeText(content)
+      .then(() => {
+        this.toastr.info('Meeting invite copied.');
+        console.log('Text copied to clipboard');
+      })
+      .catch((err) => {
+        console.error('Error copying text to clipboard', err);
+      });
+  }
 }

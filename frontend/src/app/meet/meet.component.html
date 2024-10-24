@@ -79,7 +79,12 @@
   </div>
 
   <div class="meeting-info">
-    <h3>Meeting Information</h3>
+    <div class="flex items-center justify-between">
+      <h3>Meeting Information</h3>
+      <button (click)="copyToClipboard()" class="control-button text-blue-400">
+        <i class="fas fa-copy"></i>
+      </button>
+    </div>
     <p><strong>Meeting Code:</strong> {{ meetCode }}</p>
     <p><strong>Your Name:</strong> {{ userName }}</p>
   </div>
