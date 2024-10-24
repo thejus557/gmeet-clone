@@ -94,7 +94,10 @@ io.on("connection", (socket) => {
 
     if (meetingArr?.length) {
       const findIndex = meetingArr.findIndex((x) => x.peerId === peerId);
-
+      meetingArr[findIndex] = {
+        ...meetingArr[findIndex],
+        isMuted: false,
+      };
       meetingArr[findIndex].isMuted = isMuted;
 
       meetings.set(meetCode, [...meetingArr]);
@@ -110,6 +113,12 @@ io.on("connection", (socket) => {
 
     if (meetingArr?.length) {
       const findIndex = meetingArr.findIndex((x) => x.peerId === peerId);
+
+      meetingArr[findIndex] = {
+        ...meetingArr[findIndex],
+        isVideoOn: false,
+      };
+
       meetingArr[findIndex].isVideoOn = isVideoOn;
 
       meetings.set(meetCode, [...meetingArr]);

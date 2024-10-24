@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterOutlet } from '@angular/router';
 import Peer, { MediaConnection } from 'peerjs';
@@ -12,9 +12,7 @@ import { SocketService } from '../socket.service';
   styleUrls: ['./landing.component.scss'],
 })
 export class LandingComponent implements OnInit {
-  localId = crypto.randomUUID();
   meetCode = '123-456-789';
-  password = '123';
   userName = 'surya';
 
   constructor(private socket: SocketService, private router: Router) {}
@@ -22,12 +20,7 @@ export class LandingComponent implements OnInit {
   ngOnInit(): void {}
 
   onJoin() {
-    this.router.navigate(['/', this.meetCode], {
-      state: {
-        localId: this.localId,
-        userName: this.userName,
-        password: this.password,
-      },
-    });
+    sessionStorage.setItem('userName', this.userName);
+    this.router.navigate(['/', this.meetCode]);
   }
 }

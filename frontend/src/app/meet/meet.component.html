@@ -1,5 +1,5 @@
 <div class="meet-container">
-  <div class="video-grid" id="video-grid"></div>
+  <div class="video-grid overflow-auto" id="video-grid"></div>
 
   <div class="participants-list">
     <h3>Participants</h3>
@@ -9,7 +9,7 @@
         class="participant"
       >
         <span>{{ participant.userName }}</span>
-        <span class="status-icons">
+        <span class="status-icons flex gap-2">
           <i
             class="fas"
             [ngClass]="{
@@ -25,34 +25,53 @@
             }"
           ></i>
         </span>
-        <button
+        <!-- <button
           *ngIf="participant.peerId !== socketService.localPeerId"
           (click)="muteUser(participant.peerId)"
         >
           {{ participant.isMuted ? "Unmute" : "Mute" }}
-        </button>
+        </button> -->
       </li>
     </ul>
   </div>
 
   <div class="controls">
-    <button (click)="toggleAudio()" class="control-button">
+    <button
+      (click)="toggleAudio()"
+      class="control-button bg-gray-300"
+      [ngClass]="{
+        'bg-gray-300': !isMuted,
+        'bg-[#ff4d4f]': isMuted
+      }"
+    >
       <i
         class="fas"
         [ngClass]="{
           'fa-microphone': !isMuted,
-          'fa-microphone-slash': isMuted
+          'fa-microphone-slash text-white': isMuted
         }"
       ></i>
-      {{ isMuted ? "Unmute" : "Mute" }}
+      <!-- {{ isMuted ? "Unmute" : "Mute" }} -->
     </button>
-    <button (click)="toggleVideo()" class="control-button">
+
+    <button
+      (click)="toggleVideo()"
+      class="control-button bg-gray-300"
+      [ngClass]="{
+        'bg-gray-300': isVideoOn,
+        'bg-[#ff4d4f]': !isVideoOn
+      }"
+    >
       <i
         class="fas"
-        [ngClass]="{ 'fa-video': isVideoOn, 'fa-video-slash': !isVideoOn }"
+        [ngClass]="{
+          'fa-video': isVideoOn,
+          'fa-video-slash text-white': !isVideoOn
+        }"
       ></i>
-      {{ isVideoOn ? "Turn Off Video" : "Turn On Video" }}
+      <!-- {{ isVideoOn ? "Turn Off Video" : "Turn On Video" }} -->
     </button>
+
     <button (click)="endMeeting()" class="control-button end-call">
       <i class="fas fa-phone-slash"></i>
       End Call

@@ -21,8 +21,7 @@ interface Participant {
 })
 export class MeetComponent implements OnInit, OnDestroy {
   meetCode!: string;
-  password!: string;
-  userName!: string;
+  userName!: string | null;
   localStreamVideo!: MediaStream;
   isMuted: boolean = false;
   isVideoOn: boolean = true;
@@ -32,12 +31,19 @@ export class MeetComponent implements OnInit, OnDestroy {
     private router: Router,
     public socketService: SocketService
   ) {
-    const navigation = this.router.getCurrentNavigation();
-    if (navigation?.extras.state) {
-      const { userName, password } = navigation.extras.state;
-      this.userName = userName;
-      this.password = password;
+    this.userName = sessionStorage.getItem('userName') || null;
+    if (!this.userName) {
+      this.router.navigate(['/']);
     }
+    // const navigation = this.router.getCurrentNavigation();
+    // if (navigation?.extras.state) {
+    //   const { userName } = navigation.extras.state;
+    //   this.userName = userName;
+    //   console.log('user', this.userName);
+    //   if (!this.userName) {
+    //     this.router.navigate(['/']);
+    //   }
+    // }
   }
 
   async ngOnInit() {
