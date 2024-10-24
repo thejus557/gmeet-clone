@@ -46,7 +46,7 @@ export class SocketService {
     console.log('ice servers', iceServers);
     // peerConfiguration.iceServers = iceServers;
 
-    this.peer = new Peer(undefined, {
+    this.peer = new Peer(undefined as any, {
       debug: 3,
       config: iceServers,
       secure: false,
