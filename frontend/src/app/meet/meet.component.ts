@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SocketService } from '../socket.service';
 import { CommonModule } from '@angular/common';
+import { ToastrService } from 'ngx-toastr';
 
 interface Participant {
   peerId: string;
@@ -29,21 +30,13 @@ export class MeetComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
-    public socketService: SocketService
+    public socketService: SocketService,
+    private toastr: ToastrService
   ) {
     this.userName = sessionStorage.getItem('userName') || null;
     if (!this.userName) {
       this.router.navigate(['/']);
     }
-    // const navigation = this.router.getCurrentNavigation();
-    // if (navigation?.extras.state) {
-    //   const { userName } = navigation.extras.state;
-    //   this.userName = userName;
-    //   console.log('user', this.userName);
-    //   if (!this.userName) {
-    //     this.router.navigate(['/']);
-    //   }
-    // }
   }
 
   async ngOnInit() {
@@ -79,6 +72,7 @@ export class MeetComponent implements OnInit, OnDestroy {
     });
 
     this.socketService.socket.on('user-joined', (data) => {
+      this.toastr.info(`${data.userName} joined the meeting.`);
       this.handleUserJoined(data);
     });
 
@@ -102,6 +96,7 @@ export class MeetComponent implements OnInit, OnDestroy {
     });
 
     this.socketService.socket.on('user-left', (data) => {
+      this.toastr.info(`${data.userName} left the meeting.`);
       this.socketService.removeVideoFromGrid(data.peerId);
     });
 
