@@ -1,11 +1,9 @@
 {
   "name": "server",
+  "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js"
-  },
-  "engines": {
-    "node": "20.x"
+    "start": "node ./api/index.js",
+    "dev": "nodemon ./api/index.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
