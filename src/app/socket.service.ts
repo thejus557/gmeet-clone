@@ -80,16 +80,40 @@ export class SocketService {
     stream: MediaStream,
     data: any
   ) {
-    let streamHandled = false;
-
     call.answer(stream);
     call.on('stream', (remoteStream: MediaStream) => {
       console.log('answered the stream');
-      if (!streamHandled) {
-        streamHandled = true;
-        this.addVideoToGrid(remoteStream, call.peer);
-      }
+      this.addVideoToGrid(remoteStream, call.peer);
     });
+
+    const peerConnection = call.peerConnection;
+
+    peerConnection.oniceconnectionstatechange = () => {
+      const state = peerConnection.iceConnectionState;
+      console.log(`ICE connection state changed: ${state}`);
+
+      if (state === 'disconnected' || state === 'failed') {
+        console.warn('ICE connection lost, retrying...');
+        this.retryConnection(call, stream, data); // Retry logic
+      }
+    };
+  }
+
+  public retryConnection(
+    call: MediaConnection,
+    stream: MediaStream,
+    data: any
+  ) {
+    console.log('Attempting to retry the connection...');
+
+    // Close the current call
+    call.close();
+
+    // Retry the call after a delay
+    setTimeout(() => {
+      const newCall = this.peer.call(call.peer, stream); // Re-initiate the call
+      this.handleIncomingCall(newCall, stream, data); // Rebind the call event handlers
+    }, 2000); // Wait 2 seconds before retrying
   }
 
   public removeVideoFromGrid(peerId: string) {

@@ -111,14 +111,24 @@ export class MeetComponent implements OnInit, OnDestroy {
       data.peerId,
       this.localStreamVideo
     );
-    let streamHandled = false;
+    let rs!: MediaStream;
     call.on('stream', (remoteStream) => {
+      rs = remoteStream;
       console.log('asnwer the stream');
-      if (!streamHandled) {
-        streamHandled = true;
-        this.socketService.addVideoToGrid(remoteStream, data.peerId);
-      }
+      this.socketService.addVideoToGrid(remoteStream, data.peerId);
     });
+
+    const peerConnection = call.peerConnection;
+
+    peerConnection.oniceconnectionstatechange = () => {
+      const state = peerConnection.iceConnectionState;
+      console.log(`ICE connection state changed: ${state}`);
+
+      if (state === 'disconnected' || state === 'failed') {
+        console.warn('ICE connection lost, retrying...');
+        this.socketService.retryConnection(call, rs, data); // Retry logic
+      }
+    };
   }
 
   private async addLocalVideo() {
