@@ -47,6 +47,11 @@ export class SocketService {
     });
   }
 
+  public closePeerConnection(data: any) {
+    // this.peer.disconnect();
+    this.socket.emit('end-meet', data);
+  }
+
   private joinRoom(data: any) {
     this.socket.emit('join-meet', data);
   }
@@ -71,6 +76,15 @@ export class SocketService {
         this.addVideoToGrid(remoteStream, call.peer);
       }
     });
+  }
+
+  public removeVideoFromGrid(peerId: string) {
+    const videoElement = document.getElementById(`video-${peerId}`);
+    if (videoElement) {
+      videoElement.remove(); // Remove the video element from the DOM
+    } else {
+      console.warn(`Video element with peerId ${peerId} not found`);
+    }
   }
 
   public addVideoToGrid(stream: MediaStream, peerId: string) {

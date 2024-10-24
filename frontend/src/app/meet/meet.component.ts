@@ -48,7 +48,6 @@ export class MeetComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.endMeeting();
-    this.socketService.socket.emit('disconnect', { id: this.meetCode });
   }
 
   private initializeMeeting() {
@@ -90,6 +89,16 @@ export class MeetComponent implements OnInit, OnDestroy {
       this.updateParticipantVideoState(data);
     });
 
+    this.socketService.socket.on('user-left-success', (data) => {
+      this.socketService.removeVideoFromGrid(data.peerId);
+      this.localStreamVideo.getTracks().forEach((track) => track.stop());
+      this.router.navigate(['/']);
+    });
+
+    this.socketService.socket.on('user-left', (data) => {
+      this.socketService.removeVideoFromGrid(data.peerId);
+    });
+
     this.socketService.onMuteRequest().subscribe((muterName) => {
       this.handleMuteRequest(muterName);
     });
@@ -127,7 +136,7 @@ export class MeetComponent implements OnInit, OnDestroy {
   }
 
   public endMeeting() {
-    this.socketService.socket.emit('end-meet', {
+    this.socketService.closePeerConnection({
       meetCode: this.meetCode,
       userName: this.userName,
       peerId: this.socketService.localPeerId,
