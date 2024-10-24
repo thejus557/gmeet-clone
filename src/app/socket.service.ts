@@ -67,14 +67,9 @@ export class SocketService {
     stream: MediaStream,
     data: any
   ) {
-    let streamHandled = false;
-
     call.answer(stream);
     call.on('stream', (remoteStream: MediaStream) => {
-      if (!streamHandled) {
-        streamHandled = true;
-        this.addVideoToGrid(remoteStream, call.peer);
-      }
+      this.addVideoToGrid(remoteStream, call.peer);
     });
   }
 
