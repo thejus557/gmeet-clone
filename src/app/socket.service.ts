@@ -38,13 +38,18 @@ export class SocketService {
     });
   }
 
-  public initializePeerConnection(data: any) {
+  public async initializePeerConnection(data: any) {
+    const response = await fetch(
+      'https://surya-peer.metered.live/api/v1/turn/credentials?apiKey=155fcba4dcc4bdf916c19b928233ee6acbe0'
+    );
+    const iceServers = await response.json();
+    // peerConfiguration.iceServers = iceServers;
+
     this.peer = new Peer({
-      key: 'peerjs',
-      host: 'gmeet-clone-pi.vercel.app',
-      port: 443,
-      path: '/',
-      secure: true,
+      debug: 1,
+      config: iceServers,
+      secure: false,
+      referrerPolicy: 'origin-when-cross-origin',
     });
     this.peer.on('open', (id) => {
       this.localPeerId = id;
