@@ -18,7 +18,12 @@ export class SocketService {
   }
 
   private initializeSocket() {
-    this.socket = io('https://connect-meet-backend.onrender.com/');
+    this.socket = io('https://connect-meet-backend.onrender.com/', {
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      timeout: 10000,
+    });
     this.socket.on('connect', () => {
       console.log('Socket connected!');
     });
@@ -45,12 +50,16 @@ export class SocketService {
     const iceServers = await response.json();
     console.log('ice servers', iceServers);
     // peerConfiguration.iceServers = iceServers;
-
     this.peer = new Peer(undefined as any, {
       debug: 3,
-      config: iceServers,
-      secure: false,
-      referrerPolicy: 'origin-when-cross-origin',
+      config: {
+        ...iceServers,
+        sdpSemantics: 'unified-plan',
+        iceTransportPolicy: 'all',
+      },
+      secure: true,
+      host: 'surya-peer.metered.live',
+      port: 443,
     });
     this.peer.on('open', (id) => {
       console.log('peer id', id);
