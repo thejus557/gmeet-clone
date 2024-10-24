@@ -43,10 +43,11 @@ export class SocketService {
       'https://surya-peer.metered.live/api/v1/turn/credentials?apiKey=155fcba4dcc4bdf916c19b928233ee6acbe0'
     );
     const iceServers = await response.json();
+    console.log('ice servers', iceServers);
     // peerConfiguration.iceServers = iceServers;
 
     this.peer = new Peer({
-      debug: 1,
+      debug: 3,
       config: iceServers,
       secure: false,
       referrerPolicy: 'origin-when-cross-origin',
@@ -69,6 +70,7 @@ export class SocketService {
 
   public addUserToCall(localStream: MediaStream, data: any) {
     this.peer.on('call', (call) => {
+      console.log('handled incoming call');
       this.handleIncomingCall(call, localStream, data);
     });
   }
@@ -82,6 +84,7 @@ export class SocketService {
 
     call.answer(stream);
     call.on('stream', (remoteStream: MediaStream) => {
+      console.log('answered the stream');
       if (!streamHandled) {
         streamHandled = true;
         this.addVideoToGrid(remoteStream, call.peer);
@@ -99,6 +102,7 @@ export class SocketService {
   }
 
   public addVideoToGrid(stream: MediaStream, peerId: string) {
+    console.log('added video to grid');
     const existingVideo = document.getElementById(`video-${peerId}`);
     if (existingVideo) {
       return;
