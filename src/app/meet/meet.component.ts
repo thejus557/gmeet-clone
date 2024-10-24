@@ -106,12 +106,14 @@ export class MeetComponent implements OnInit, OnDestroy {
   }
 
   private handleUserJoined(data: any) {
+    console.log('calling thepeer');
     const call = this.socketService.peer.call(
       data.peerId,
       this.localStreamVideo
     );
     let streamHandled = false;
     call.on('stream', (remoteStream) => {
+      console.log('asnwer the stream');
       if (!streamHandled) {
         streamHandled = true;
         this.socketService.addVideoToGrid(remoteStream, data.peerId);
