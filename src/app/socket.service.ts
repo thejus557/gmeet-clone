@@ -58,7 +58,6 @@ export class SocketService {
         iceTransportPolicy: 'all',
       },
       secure: true,
-      host: 'surya-peer.metered.live',
       port: 443,
     });
     this.peer.on('open', (id) => {
