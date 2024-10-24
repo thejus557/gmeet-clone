@@ -39,7 +39,13 @@ export class SocketService {
   }
 
   public initializePeerConnection(data: any) {
-    this.peer = new Peer();
+    this.peer = new Peer({
+      key: 'peerjs',
+      host: 'gmeet-clone-pi.vercel.app',
+      port: 443,
+      path: '/',
+      secure: true,
+    });
     this.peer.on('open', (id) => {
       this.localPeerId = id;
       localStorage.setItem('peerId', id);
