@@ -127,10 +127,10 @@ export class SocketService {
 
   public addVideoToGrid(stream: MediaStream, peerId: string) {
     console.log('added video to grid');
-    const existingVideo = document.getElementById(`video-${peerId}`);
-    if (existingVideo) {
-      return;
-    }
+    // const existingVideo = document.getElementById(`video-${peerId}`);
+    // if (existingVideo) {
+    //   return;
+    // }
 
     const videoGrid = document.getElementById('video-grid');
     if (!videoGrid) {
@@ -139,6 +139,7 @@ export class SocketService {
     }
 
     const videoElement = document.createElement('video');
+    console.log('stream added', stream);
     videoElement.srcObject = stream;
     videoElement.autoplay = true;
     videoElement.muted = peerId === this.localPeerId;
