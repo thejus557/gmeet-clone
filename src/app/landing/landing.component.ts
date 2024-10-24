@@ -19,7 +19,6 @@ export class LandingComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  handleJoinMeeting() {}
   handleStartInstantMeeting() {
     const uuid = crypto.randomUUID();
     const meetUserName = prompt('Enter your name') || 'user';
@@ -27,7 +26,7 @@ export class LandingComponent implements OnInit {
     this.router.navigate(['/', uuid]);
   }
 
-  onJoin() {
+  handleJoinMeeting() {
     sessionStorage.setItem('userName', this.userName);
     this.router.navigate(['/', this.meetCode]);
   }
