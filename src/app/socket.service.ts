@@ -53,6 +53,7 @@ export class SocketService {
       referrerPolicy: 'origin-when-cross-origin',
     });
     this.peer.on('open', (id) => {
+      console.log('peer id', id);
       this.localPeerId = id;
       localStorage.setItem('peerId', id);
       this.joinRoom({ ...data, peerId: id });
