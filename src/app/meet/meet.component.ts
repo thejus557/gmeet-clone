@@ -123,7 +123,14 @@ export class MeetComponent implements OnInit, OnDestroy {
     try {
       const localVideo = await navigator.mediaDevices.getUserMedia({
         audio: true,
-        video: true,
+        video: {
+          width: {
+            ideal: 640,
+          },
+          height: {
+            ideal: 480,
+          },
+        },
       });
       this.localStreamVideo = localVideo;
       this.socketService.addVideoToGrid(
